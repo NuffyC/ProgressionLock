@@ -1,0 +1,13 @@
+E:\Servers\Plugins2\ProgressionBasedAntiCheat\ProgressionBasedAntiCheat\bin\Debug\net6.0\HttpServer.dll
+E:\Servers\Plugins2\ProgressionBasedAntiCheat\ProgressionBasedAntiCheat\bin\Debug\net6.0\ProgressionBasedAntiCheat.deps.json
+E:\Servers\Plugins2\ProgressionBasedAntiCheat\ProgressionBasedAntiCheat\bin\Debug\net6.0\ProgressionBasedAntiCheat.dll
+E:\Servers\Plugins2\ProgressionBasedAntiCheat\ProgressionBasedAntiCheat\bin\Debug\net6.0\ProgressionBasedAntiCheat.pdb
+E:\Servers\Plugins2\ProgressionBasedAntiCheat\ProgressionBasedAntiCheat\obj\Debug\net6.0\ProgressionBasedAntiCheat.csproj.AssemblyReference.cache
+E:\Servers\Plugins2\ProgressionBasedAntiCheat\ProgressionBasedAntiCheat\obj\Debug\net6.0\ProgressionBasedAntiCheat.GeneratedMSBuildEditorConfig.editorconfig
+E:\Servers\Plugins2\ProgressionBasedAntiCheat\ProgressionBasedAntiCheat\obj\Debug\net6.0\ProgressionBasedAntiCheat.AssemblyInfoInputs.cache
+E:\Servers\Plugins2\ProgressionBasedAntiCheat\ProgressionBasedAntiCheat\obj\Debug\net6.0\ProgressionBasedAntiCheat.AssemblyInfo.cs
+E:\Servers\Plugins2\ProgressionBasedAntiCheat\ProgressionBasedAntiCheat\obj\Debug\net6.0\ProgressionBasedAntiCheat.csproj.CoreCompileInputs.cache
+E:\Servers\Plugins2\ProgressionBasedAntiCheat\ProgressionBasedAntiCheat\obj\Debug\net6.0\ProgressionBasedAntiCheat.dll
+E:\Servers\Plugins2\ProgressionBasedAntiCheat\ProgressionBasedAntiCheat\obj\Debug\net6.0\refint\ProgressionBasedAntiCheat.dll
+E:\Servers\Plugins2\ProgressionBasedAntiCheat\ProgressionBasedAntiCheat\obj\Debug\net6.0\ProgressionBasedAntiCheat.pdb
+E:\Servers\Plugins2\ProgressionBasedAntiCheat\ProgressionBasedAntiCheat\obj\Debug\net6.0\ref\ProgressionBasedAntiCheat.dll
