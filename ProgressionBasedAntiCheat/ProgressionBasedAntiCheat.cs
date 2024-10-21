@@ -30,6 +30,7 @@ namespace ProgressionBasedAntiCheat
             ServerApi.Hooks.GameUpdate.Register(this, OnUpdate);
             ServerApi.Hooks.GameUpdate.Register(this, OnUpdateBoss);
             Commands.ChatCommands.Add(new Command("pbac.resetboss", resetprogress, "resetworldprogress"));
+            Commands.ChatCommands.Add(new Command("pl.bypass", Plbypass, "plbypass"));
             if (File.Exists(Path.Combine(TShock.SavePath, "BossStatus", "config.json")))
                 LoadConfig();
             else
@@ -53,6 +54,11 @@ namespace ProgressionBasedAntiCheat
             return TShock.Players.Where(p => p != null && p.IsLoggedIn);
         }
 
+        private void Plbypass(CommandArgs args)
+        {
+
+        }
+
         private void CheckSlot(TSPlayer player, int slot)
         {
             Item itemToCheck = (
@@ -67,13 +73,13 @@ namespace ProgressionBasedAntiCheat
                 ((!(slot >= 59)) ? player.TPlayer.inventory[slot] : player.TPlayer.armor[slot - 59])))))))));
 
             if (itemToCheck.type == ItemID.PlatinumCoin &&
-                itemToCheck.stack >= itemToCheck.maxStack - 5)
+                itemToCheck.stack >= itemToCheck.maxStack - 5 && player.HasPermission("pl.bypass") == false)
             {
                 TSPlayer.All.SendMessage(@"Player: " + player.Name + " had illegal items. [i/s" + itemToCheck.stack + ":"+ itemToCheck.type + "] on slot:" + slot, 255, 0, 0);
                 itemToCheck.SetDefaults(0);
                 NetMessage.SendData((int)PacketTypes.PlayerSlot, -1, -1, NetworkText.Empty, player.Index, slot);
             }
-            if (Main.zenithWorld == true && Main.remixWorld)
+            if (Main.zenithWorld == true && Main.remixWorld && player.HasPermission("pl.bypass") == false)
             {
                 #region ProgressionLock
                 BossStatus config = LoadConfig();
@@ -148,62 +154,42 @@ namespace ProgressionBasedAntiCheat
                 }
                 if (config.downedAllPillars == false)
                 {
-                    if (itemToCheck.type == ItemID.LunarHook
-                        || itemToCheck.type == ItemID.CelestialSigil
-                        || itemToCheck.type == ItemID.SuperHealingPotion)
-                    {
-                        TSPlayer.All.SendMessage(@"Player: " + player.Name + " had illegal items. [i/s" + itemToCheck.stack + ":" + itemToCheck.type + "] on slot:" + slot, 255, 0, 0);
-                        itemToCheck.SetDefaults(0);
-                        NetMessage.SendData((int)PacketTypes.PlayerSlot, -1, -1, NetworkText.Empty, player.Index, slot);
-                    }
+
                 }
                 if (config.downedNebula == false)
                 {
-                    if (itemToCheck.type == ItemID.NebulaArcanum
-                        || itemToCheck.type == ItemID.NebulaBlaze
-                        || itemToCheck.type == ItemID.FragmentNebula)
-                    {
-                        TSPlayer.All.SendMessage(@"Player: " + player.Name + " had illegal items. [i/s" + itemToCheck.stack + ":" + itemToCheck.type + "] on slot:" + slot, 255, 0, 0);
-                        itemToCheck.SetDefaults(0);
-                        NetMessage.SendData((int)PacketTypes.PlayerSlot, -1, -1, NetworkText.Empty, player.Index, slot);
-                    }
+
                 }
                 if (config.downedSolar == false)
                 {
-                    if (itemToCheck.type == ItemID.FragmentSolar
-                        || itemToCheck.type == ItemID.SolarEruption
-                        || itemToCheck.type == ItemID.DayBreak)
-                    {
-                        TSPlayer.All.SendMessage(@"Player: " + player.Name + " had illegal items. [i/s" + itemToCheck.stack + ":" + itemToCheck.type + "] on slot:" + slot, 255, 0, 0);
-                        itemToCheck.SetDefaults(0);
-                        NetMessage.SendData((int)PacketTypes.PlayerSlot, -1, -1, NetworkText.Empty, player.Index, slot);
-                    }
+
                 }
                 if (config.downedStardust == false)
                 {
-                    if (itemToCheck.type == ItemID.FragmentStardust
-                        || itemToCheck.type == ItemID.StardustDragonStaff
-                        || itemToCheck.type == ItemID.StardustCellStaff)
-                    {
-                        TSPlayer.All.SendMessage(@"Player: " + player.Name + " had illegal items. [i/s" + itemToCheck.stack + ":" + itemToCheck.type + "] on slot:" + slot, 255, 0, 0);
-                        itemToCheck.SetDefaults(0);
-                        NetMessage.SendData((int)PacketTypes.PlayerSlot, -1, -1, NetworkText.Empty, player.Index, slot);
-                    }
+
                 }
                 if (config.downedVortex == false)
                 {
-                    if (itemToCheck.type == ItemID.FragmentVortex
-                        || itemToCheck.type == ItemID.VortexBeater
-                        || itemToCheck.type == ItemID.Phantasm)
-                    {
-                        TSPlayer.All.SendMessage(@"Player: " + player.Name + " had illegal items. [i/s" + itemToCheck.stack + ":" + itemToCheck.type + "] on slot:" + slot, 255, 0, 0);
-                        itemToCheck.SetDefaults(0);
-                        NetMessage.SendData((int)PacketTypes.PlayerSlot, -1, -1, NetworkText.Empty, player.Index, slot);
-                    }
+
                 }
                 if (config.downedLC == false)
                 {
-                    if (itemToCheck.type == ItemID.CultistBossBag)
+                    if (itemToCheck.type == ItemID.CultistBossBag
+                        || itemToCheck.type == ItemID.FragmentVortex
+                        || itemToCheck.type == ItemID.VortexBeater
+                        || itemToCheck.type == ItemID.Phantasm
+                        || itemToCheck.type == ItemID.FragmentStardust
+                        || itemToCheck.type == ItemID.StardustDragonStaff
+                        || itemToCheck.type == ItemID.StardustCellStaff
+                        || itemToCheck.type == ItemID.FragmentSolar
+                        || itemToCheck.type == ItemID.SolarEruption
+                        || itemToCheck.type == ItemID.DayBreak
+                        || itemToCheck.type == ItemID.NebulaArcanum
+                        || itemToCheck.type == ItemID.NebulaBlaze
+                        || itemToCheck.type == ItemID.FragmentNebula
+                        || itemToCheck.type == ItemID.LunarHook
+                        || itemToCheck.type == ItemID.CelestialSigil
+                        || itemToCheck.type == ItemID.SuperHealingPotion)
                     {
                         TSPlayer.All.SendMessage(@"Player: " + player.Name + " had illegal items. [i/s" + itemToCheck.stack + ":" + itemToCheck.type + "] on slot:" + slot, 255, 0, 0);
                         itemToCheck.SetDefaults(0);
@@ -694,14 +680,12 @@ namespace ProgressionBasedAntiCheat
                         || itemToCheck.type == ItemID.AdamantiteDrill
                         || itemToCheck.type == ItemID.AdamantiteBreastplate
                         || itemToCheck.type == ItemID.AdamantiteBar
-                        || itemToCheck.type == ItemID.AdamantiteOre
                         || itemToCheck.type == ItemID.AdamantiteGlaive
                         || itemToCheck.type == ItemID.AdamantitePickaxe
                         || itemToCheck.type == ItemID.AdamantiteRepeater
                         || itemToCheck.type == ItemID.AdamantiteSword
                         || itemToCheck.type == ItemID.AdamantiteWaraxe
                         || itemToCheck.type == ItemID.TitaniumBar
-                        || itemToCheck.type == ItemID.TitaniumOre
                         || itemToCheck.type == ItemID.TitaniumLeggings
                         || itemToCheck.type == ItemID.TitaniumBreastplate
                         || itemToCheck.type == ItemID.TitaniumChainsaw
@@ -736,7 +720,6 @@ namespace ProgressionBasedAntiCheat
                         || itemToCheck.type == ItemID.OrichalcumHelmet
                         || itemToCheck.type == ItemID.OrichalcumLeggings
                         || itemToCheck.type == ItemID.OrichalcumMask
-                        || itemToCheck.type == ItemID.OrichalcumOre
                         || itemToCheck.type == ItemID.OrichalcumPickaxe
                         || itemToCheck.type == ItemID.OrichalcumRepeater
                         || itemToCheck.type == ItemID.OrichalcumSword
@@ -750,7 +733,6 @@ namespace ProgressionBasedAntiCheat
                         || itemToCheck.type == ItemID.MythrilHat
                         || itemToCheck.type == ItemID.MythrilHelmet
                         || itemToCheck.type == ItemID.MythrilHood
-                        || itemToCheck.type == ItemID.MythrilOre
                         || itemToCheck.type == ItemID.MythrilPickaxe
                         || itemToCheck.type == ItemID.MythrilRepeater
                         || itemToCheck.type == ItemID.MythrilSword
@@ -764,7 +746,6 @@ namespace ProgressionBasedAntiCheat
                         || itemToCheck.type == ItemID.CobaltLeggings
                         || itemToCheck.type == ItemID.CobaltMask
                         || itemToCheck.type == ItemID.CobaltNaginata
-                        || itemToCheck.type == ItemID.CobaltOre
                         || itemToCheck.type == ItemID.CobaltPickaxe
                         || itemToCheck.type == ItemID.CobaltRepeater
                         || itemToCheck.type == ItemID.CobaltSword
@@ -777,7 +758,6 @@ namespace ProgressionBasedAntiCheat
                         || itemToCheck.type == ItemID.PalladiumHelmet
                         || itemToCheck.type == ItemID.PalladiumLeggings
                         || itemToCheck.type == ItemID.PalladiumMask
-                        || itemToCheck.type == ItemID.PalladiumOre
                         || itemToCheck.type == ItemID.PalladiumPickaxe
                         || itemToCheck.type == ItemID.PalladiumPike
                         || itemToCheck.type == ItemID.PalladiumRepeater
@@ -866,6 +846,20 @@ namespace ProgressionBasedAntiCheat
                         NetMessage.SendData((int)PacketTypes.PlayerSlot, -1, -1, NetworkText.Empty, player.Index, slot);
                     }
                 }
+                if (config.downedWOF == false)
+                {
+                    if (itemToCheck.type == ItemID.AdamantiteOre
+                        || itemToCheck.type == ItemID.TitaniumOre
+                        || itemToCheck.type == ItemID.OrichalcumOre
+                        || itemToCheck.type == ItemID.MythrilOre
+                        || itemToCheck.type == ItemID.CobaltOre
+                        || itemToCheck.type == ItemID.PalladiumOre)
+                    {
+                        //TSPlayer.All.SendMessage(@"Player: " + player.Name + " had illegal items. [i/s" + itemToCheck.stack + ":" + itemToCheck.type + "] on slot:" + slot, 255, 0, 0);
+                        itemToCheck.SetDefaults(0);
+                        NetMessage.SendData((int)PacketTypes.PlayerSlot, -1, -1, NetworkText.Empty, player.Index, slot);
+                    }
+                }
                 if (config.downedSkeletron == false)
                 {
                     if (itemToCheck.type == ItemID.ShadowKey
@@ -909,12 +903,10 @@ namespace ProgressionBasedAntiCheat
                 }
                 if (config.downedEvil == false)
                 {
-                    if (itemToCheck.type == ItemID.ShadowScale
-                        || itemToCheck.type == ItemID.WormScarf
+                    if (itemToCheck.type == ItemID.WormScarf
                         || itemToCheck.type == ItemID.EaterOfWorldsBossBag
                         || itemToCheck.type == ItemID.BrainOfConfusion
                         || itemToCheck.type == ItemID.BrainOfCthulhuBossBag
-                        || itemToCheck.type == ItemID.TissueSample
                         || itemToCheck.type == ItemID.Hellstone
                         || itemToCheck.type == ItemID.HellstoneBar
                         || itemToCheck.type == ItemID.FireproofBugNet
@@ -930,6 +922,16 @@ namespace ProgressionBasedAntiCheat
                         || itemToCheck.type == ItemID.MoltenBreastplate)
                     {
                         TSPlayer.All.SendMessage(@"Player: " + player.Name + " had illegal items. [i/s" + itemToCheck.stack + ":" + itemToCheck.type + "] on slot:" + slot, 255, 0, 0);
+                        itemToCheck.SetDefaults(0);
+                        NetMessage.SendData((int)PacketTypes.PlayerSlot, -1, -1, NetworkText.Empty, player.Index, slot);
+                    }
+                }
+                if (config.downedEvil == false)
+                {
+                    if (itemToCheck.type == ItemID.ShadowScale
+                        || itemToCheck.type == ItemID.TissueSample)
+                    {
+                        //TSPlayer.All.SendMessage(@"Player: " + player.Name + " had illegal items. [i/s" + itemToCheck.stack + ":" + itemToCheck.type + "] on slot:" + slot, 255, 0, 0);
                         itemToCheck.SetDefaults(0);
                         NetMessage.SendData((int)PacketTypes.PlayerSlot, -1, -1, NetworkText.Empty, player.Index, slot);
                     }
@@ -979,7 +981,7 @@ namespace ProgressionBasedAntiCheat
                 #endregion
             };
 
-            if (Main.zenithWorld == false)
+            if (Main.zenithWorld == false && player.HasPermission("pl.bypass") == false)
             {
                 #region ProgressionLock
                 BossStatus config = LoadConfig();
@@ -1054,62 +1056,42 @@ namespace ProgressionBasedAntiCheat
                 }
                 if (config.downedAllPillars == false)
                 {
-                    if (itemToCheck.type == ItemID.LunarHook
-                        || itemToCheck.type == ItemID.CelestialSigil
-                        || itemToCheck.type == ItemID.SuperHealingPotion)
-                    {
-                        TSPlayer.All.SendMessage(@"Player: " + player.Name + " had illegal items. [i/s" + itemToCheck.stack + ":" + itemToCheck.type + "] on slot:" + slot, 255, 0, 0);
-                        itemToCheck.SetDefaults(0);
-                        NetMessage.SendData((int)PacketTypes.PlayerSlot, -1, -1, NetworkText.Empty, player.Index, slot);
-                    }
+
                 }
                 if (config.downedNebula == false)
                 {
-                    if (itemToCheck.type == ItemID.NebulaArcanum
-                        || itemToCheck.type == ItemID.NebulaBlaze
-                        || itemToCheck.type == ItemID.FragmentNebula)
-                    {
-                        TSPlayer.All.SendMessage(@"Player: " + player.Name + " had illegal items. [i/s" + itemToCheck.stack + ":" + itemToCheck.type + "] on slot:" + slot, 255, 0, 0);
-                        itemToCheck.SetDefaults(0);
-                        NetMessage.SendData((int)PacketTypes.PlayerSlot, -1, -1, NetworkText.Empty, player.Index, slot);
-                    }
+
                 }
                 if (config.downedSolar == false)
                 {
-                    if (itemToCheck.type == ItemID.FragmentSolar
-                        || itemToCheck.type == ItemID.SolarEruption
-                        || itemToCheck.type == ItemID.DayBreak)
-                    {
-                        TSPlayer.All.SendMessage(@"Player: " + player.Name + " had illegal items. [i/s" + itemToCheck.stack + ":" + itemToCheck.type + "] on slot:" + slot, 255, 0, 0);
-                        itemToCheck.SetDefaults(0);
-                        NetMessage.SendData((int)PacketTypes.PlayerSlot, -1, -1, NetworkText.Empty, player.Index, slot);
-                    }
+
                 }
                 if (config.downedStardust == false)
                 {
-                    if (itemToCheck.type == ItemID.FragmentStardust
-                        || itemToCheck.type == ItemID.StardustDragonStaff
-                        || itemToCheck.type == ItemID.StardustCellStaff)
-                    {
-                        TSPlayer.All.SendMessage(@"Player: " + player.Name + " had illegal items. [i/s" + itemToCheck.stack + ":" + itemToCheck.type + "] on slot:" + slot, 255, 0, 0);
-                        itemToCheck.SetDefaults(0);
-                        NetMessage.SendData((int)PacketTypes.PlayerSlot, -1, -1, NetworkText.Empty, player.Index, slot);
-                    }
+
                 }
                 if (config.downedVortex == false)
                 {
-                    if (itemToCheck.type == ItemID.FragmentVortex
-                        || itemToCheck.type == ItemID.VortexBeater
-                        || itemToCheck.type == ItemID.Phantasm)
-                    {
-                        TSPlayer.All.SendMessage(@"Player: " + player.Name + " had illegal items. [i/s" + itemToCheck.stack + ":" + itemToCheck.type + "] on slot:" + slot, 255, 0, 0);
-                        itemToCheck.SetDefaults(0);
-                        NetMessage.SendData((int)PacketTypes.PlayerSlot, -1, -1, NetworkText.Empty, player.Index, slot);
-                    }
+
                 }
                 if (config.downedLC == false)
                 {
-                    if (itemToCheck.type == ItemID.CultistBossBag)
+                    if (itemToCheck.type == ItemID.CultistBossBag
+                        || itemToCheck.type == ItemID.FragmentVortex
+                        || itemToCheck.type == ItemID.VortexBeater
+                        || itemToCheck.type == ItemID.Phantasm
+                        || itemToCheck.type == ItemID.FragmentStardust
+                        || itemToCheck.type == ItemID.StardustDragonStaff
+                        || itemToCheck.type == ItemID.StardustCellStaff
+                        || itemToCheck.type == ItemID.FragmentSolar
+                        || itemToCheck.type == ItemID.SolarEruption
+                        || itemToCheck.type == ItemID.DayBreak
+                        || itemToCheck.type == ItemID.NebulaArcanum
+                        || itemToCheck.type == ItemID.NebulaBlaze
+                        || itemToCheck.type == ItemID.FragmentNebula
+                        || itemToCheck.type == ItemID.LunarHook
+                        || itemToCheck.type == ItemID.CelestialSigil
+                        || itemToCheck.type == ItemID.SuperHealingPotion)
                     {
                         TSPlayer.All.SendMessage(@"Player: " + player.Name + " had illegal items. [i/s" + itemToCheck.stack + ":" + itemToCheck.type + "] on slot:" + slot, 255, 0, 0);
                         itemToCheck.SetDefaults(0);
@@ -1576,16 +1558,15 @@ namespace ProgressionBasedAntiCheat
                         || itemToCheck.type == ItemID.CoinGun
                         || itemToCheck.type == ItemID.PirateShipMountItem
                         || itemToCheck.type == ItemID.DripplerFlail
-                        || itemToCheck.type == ItemID.KOCannon
+                        || itemToCheck.type == ItemID.ChainKnife
                         || itemToCheck.type == ItemID.SharpTears
                         || itemToCheck.type == ItemID.SlapHand
                         || itemToCheck.type == ItemID.Bananarang
                         || itemToCheck.type == ItemID.BeamSword
                         || itemToCheck.type == ItemID.Frostbrand
-                        || itemToCheck.type == ItemID.IceBow
                         || itemToCheck.type == ItemID.FlowerofFrost
                         || itemToCheck.type == ItemID.DualHook
-                        || itemToCheck.type == ItemID.MagicDagger
+                        || itemToCheck.type == ItemID.WandofFrosting
                         || itemToCheck.type == ItemID.PhilosophersStone
                         || itemToCheck.type == ItemID.CrossNecklace
                         || itemToCheck.type == ItemID.StarCloak
@@ -1599,14 +1580,12 @@ namespace ProgressionBasedAntiCheat
                         || itemToCheck.type == ItemID.AdamantiteDrill
                         || itemToCheck.type == ItemID.AdamantiteBreastplate
                         || itemToCheck.type == ItemID.AdamantiteBar
-                        || itemToCheck.type == ItemID.AdamantiteOre
                         || itemToCheck.type == ItemID.AdamantiteGlaive
                         || itemToCheck.type == ItemID.AdamantitePickaxe
                         || itemToCheck.type == ItemID.AdamantiteRepeater
                         || itemToCheck.type == ItemID.AdamantiteSword
                         || itemToCheck.type == ItemID.AdamantiteWaraxe
                         || itemToCheck.type == ItemID.TitaniumBar
-                        || itemToCheck.type == ItemID.TitaniumOre
                         || itemToCheck.type == ItemID.TitaniumLeggings
                         || itemToCheck.type == ItemID.TitaniumBreastplate
                         || itemToCheck.type == ItemID.TitaniumChainsaw
@@ -1641,7 +1620,6 @@ namespace ProgressionBasedAntiCheat
                         || itemToCheck.type == ItemID.OrichalcumHelmet
                         || itemToCheck.type == ItemID.OrichalcumLeggings
                         || itemToCheck.type == ItemID.OrichalcumMask
-                        || itemToCheck.type == ItemID.OrichalcumOre
                         || itemToCheck.type == ItemID.OrichalcumPickaxe
                         || itemToCheck.type == ItemID.OrichalcumRepeater
                         || itemToCheck.type == ItemID.OrichalcumSword
@@ -1655,7 +1633,6 @@ namespace ProgressionBasedAntiCheat
                         || itemToCheck.type == ItemID.MythrilHat
                         || itemToCheck.type == ItemID.MythrilHelmet
                         || itemToCheck.type == ItemID.MythrilHood
-                        || itemToCheck.type == ItemID.MythrilOre
                         || itemToCheck.type == ItemID.MythrilPickaxe
                         || itemToCheck.type == ItemID.MythrilRepeater
                         || itemToCheck.type == ItemID.MythrilSword
@@ -1669,7 +1646,6 @@ namespace ProgressionBasedAntiCheat
                         || itemToCheck.type == ItemID.CobaltLeggings
                         || itemToCheck.type == ItemID.CobaltMask
                         || itemToCheck.type == ItemID.CobaltNaginata
-                        || itemToCheck.type == ItemID.CobaltOre
                         || itemToCheck.type == ItemID.CobaltPickaxe
                         || itemToCheck.type == ItemID.CobaltRepeater
                         || itemToCheck.type == ItemID.CobaltSword
@@ -1682,7 +1658,6 @@ namespace ProgressionBasedAntiCheat
                         || itemToCheck.type == ItemID.PalladiumHelmet
                         || itemToCheck.type == ItemID.PalladiumLeggings
                         || itemToCheck.type == ItemID.PalladiumMask
-                        || itemToCheck.type == ItemID.PalladiumOre
                         || itemToCheck.type == ItemID.PalladiumPickaxe
                         || itemToCheck.type == ItemID.PalladiumPike
                         || itemToCheck.type == ItemID.PalladiumRepeater
@@ -1770,6 +1745,20 @@ namespace ProgressionBasedAntiCheat
                         NetMessage.SendData((int)PacketTypes.PlayerSlot, -1, -1, NetworkText.Empty, player.Index, slot);
                     }
                 }
+                if (config.downedWOF == false)
+                {
+                    if (itemToCheck.type == ItemID.AdamantiteOre
+                        || itemToCheck.type == ItemID.TitaniumOre                    
+                        || itemToCheck.type == ItemID.OrichalcumOre
+                        || itemToCheck.type == ItemID.MythrilOre
+                        || itemToCheck.type == ItemID.CobaltOre
+                        || itemToCheck.type == ItemID.PalladiumOre)
+                    {
+                        //TSPlayer.All.SendMessage(@"Player: " + player.Name + " had illegal items. [i/s" + itemToCheck.stack + ":" + itemToCheck.type + "] on slot:" + slot, 255, 0, 0);
+                        itemToCheck.SetDefaults(0);
+                        NetMessage.SendData((int)PacketTypes.PlayerSlot, -1, -1, NetworkText.Empty, player.Index, slot);
+                    }
+                }
                 if (config.downedSkeletron == false)
                 {
                     if (itemToCheck.type == ItemID.ShadowKey
@@ -1813,12 +1802,10 @@ namespace ProgressionBasedAntiCheat
                 }
                 if (config.downedEvil == false)
                 {
-                    if (itemToCheck.type == ItemID.ShadowScale
-                        || itemToCheck.type == ItemID.WormScarf
+                    if (itemToCheck.type == ItemID.WormScarf
                         || itemToCheck.type == ItemID.EaterOfWorldsBossBag
                         || itemToCheck.type == ItemID.BrainOfConfusion
                         || itemToCheck.type == ItemID.BrainOfCthulhuBossBag
-                        || itemToCheck.type == ItemID.TissueSample
                         || itemToCheck.type == ItemID.Hellstone
                         || itemToCheck.type == ItemID.HellstoneBar
                         || itemToCheck.type == ItemID.FireproofBugNet
@@ -1834,6 +1821,16 @@ namespace ProgressionBasedAntiCheat
                         || itemToCheck.type == ItemID.MoltenBreastplate)
                     {
                         TSPlayer.All.SendMessage(@"Player: " + player.Name + " had illegal items. [i/s" + itemToCheck.stack + ":" + itemToCheck.type + "] on slot:" + slot, 255, 0, 0);
+                        itemToCheck.SetDefaults(0);
+                        NetMessage.SendData((int)PacketTypes.PlayerSlot, -1, -1, NetworkText.Empty, player.Index, slot);
+                    }
+                }
+                if (config.downedEvil == false)
+                {
+                    if (itemToCheck.type == ItemID.ShadowScale                      
+                        || itemToCheck.type == ItemID.TissueSample)
+                    {
+                        //TSPlayer.All.SendMessage(@"Player: " + player.Name + " had illegal items. [i/s" + itemToCheck.stack + ":" + itemToCheck.type + "] on slot:" + slot, 255, 0, 0);
                         itemToCheck.SetDefaults(0);
                         NetMessage.SendData((int)PacketTypes.PlayerSlot, -1, -1, NetworkText.Empty, player.Index, slot);
                     }
@@ -1883,6 +1880,379 @@ namespace ProgressionBasedAntiCheat
                 #endregion
             };
 
+            #region AutoBuffs
+            /*if (itemToCheck.type == ItemID.CatBast && itemToCheck.stack >= 1)
+            {
+                player.SetBuff(215, 3 * 60);
+
+            }
+            if (itemToCheck.type == ItemID.CrystalBall && itemToCheck.stack >= 1)
+            {
+                player.SetBuff(29, 3 * 60);
+
+            }
+            if (itemToCheck.type == ItemID.BewitchingTable && itemToCheck.stack >= 1)
+            {
+                player.SetBuff(150, 3 * 60);
+
+            }
+            if (itemToCheck.type == ItemID.SharpeningStation && itemToCheck.stack >= 1)
+            {
+                player.SetBuff(159, 3 * 60);
+
+            }
+            if (itemToCheck.type == ItemID.AmmoBox && itemToCheck.stack >= 1)
+            {
+                player.SetBuff(93, 3 * 60);
+
+            }
+            if (itemToCheck.type == ItemID.WarTable && itemToCheck.stack >= 1)
+            {
+                player.SetBuff(348, 3 * 60);
+
+            }
+            if (itemToCheck.type == ItemID.SliceOfCake && itemToCheck.stack >= 1)
+            {
+                player.SetBuff(192, 3 * 60);
+
+            }
+            if (itemToCheck.type == ItemID.JungleRose && itemToCheck.stack >= 1)
+            {
+                player.SetBuff(165, 3 * 60);
+
+            }
+            if (itemToCheck.type == ItemID.MiningPotion && itemToCheck.stack >= 100)
+            {
+                player.SetBuff(104, 30 * 60);
+
+            }
+            if (itemToCheck.type == ItemID.SpelunkerPotion && itemToCheck.stack >= 100)
+            {
+                player.SetBuff(9, 30 * 60);
+
+            }
+            if (itemToCheck.type == ItemID.BattlePotion && itemToCheck.stack >= 100)
+            {
+                player.SetBuff(13, 30 * 60);
+
+            }
+            if (itemToCheck.type == ItemID.ObsidianSkinPotion && itemToCheck.stack >= 100)
+            {
+                player.SetBuff(1, 30 * 60);
+
+            }
+            if (itemToCheck.type == ItemID.RegenerationPotion && itemToCheck.stack >= 100)
+            {
+                player.SetBuff(2, 30 * 60);
+
+            }
+            if (itemToCheck.type == ItemID.SwiftnessPotion && itemToCheck.stack >= 100)
+            {
+                player.SetBuff(3, 30 * 60);
+
+            }
+            if (itemToCheck.type == ItemID.GillsPotion && itemToCheck.stack >= 100)
+            {
+                player.SetBuff(4, 30 * 60);
+
+            }
+            if (itemToCheck.type == ItemID.IronskinPotion && itemToCheck.stack >= 100)
+            {
+                player.SetBuff(5, 30 * 60);
+
+            }
+            if (itemToCheck.type == ItemID.ManaRegenerationPotion && itemToCheck.stack >= 100)
+            {
+                player.SetBuff(6, 30 * 60);
+
+            }
+            if (itemToCheck.type == ItemID.MagicPowerPotion && itemToCheck.stack >= 100)
+            {
+                player.SetBuff(7, 30 * 60);
+
+            }
+            if (itemToCheck.type == ItemID.FeatherfallPotion && itemToCheck.stack >= 100)
+            {
+                player.SetBuff(8, 30 * 60);
+
+            }
+            if (itemToCheck.type == ItemID.ShinePotion && itemToCheck.stack >= 100)
+            {
+                player.SetBuff(11, 30 * 60);
+
+            }
+            if (itemToCheck.type == ItemID.InvisibilityPotion && itemToCheck.stack >= 100)
+            {
+                player.SetBuff(10, 30 * 60);
+
+            }
+            if (itemToCheck.type == ItemID.ThornsPotion && itemToCheck.stack >= 100)
+            {
+                player.SetBuff(14, 30 * 60);
+
+            }
+            if (itemToCheck.type == ItemID.WaterWalkingPotion && itemToCheck.stack >= 100)
+            {
+                player.SetBuff(15, 30 * 60);
+
+            }
+            if (itemToCheck.type == ItemID.ArcheryPotion && itemToCheck.stack >= 100)
+            {
+                player.SetBuff(16, 30 * 60);
+
+            }
+            if (itemToCheck.type == ItemID.HunterPotion && itemToCheck.stack >= 100)
+            {
+                player.SetBuff(17, 30 * 60);
+
+            }
+            if (itemToCheck.type == ItemID.GravitationPotion && itemToCheck.stack >= 100)
+            {
+                player.SetBuff(18, 30 * 60);
+
+            }
+            if (itemToCheck.type == ItemID.HeartreachPotion && itemToCheck.stack >= 100)
+            {
+                player.SetBuff(105, 30 * 60);
+
+            }
+            if (itemToCheck.type == ItemID.CalmingPotion && itemToCheck.stack >= 100)
+            {
+                player.SetBuff(106, 30 * 60);
+
+            }
+            if (itemToCheck.type == ItemID.NightOwlPotion && itemToCheck.stack >= 100)
+            {
+                player.SetBuff(299, 30 * 60);
+
+            }
+            if (itemToCheck.type == ItemID.BuilderPotion && itemToCheck.stack >= 100)
+            {
+                player.SetBuff(107, 30 * 60);
+
+            }
+            if (itemToCheck.type == ItemID.TitanPotion && itemToCheck.stack >= 100)
+            {
+                player.SetBuff(108, 30 * 60);
+
+            }
+            if (itemToCheck.type == ItemID.FlipperPotion && itemToCheck.stack >= 100)
+            {
+                player.SetBuff(109, 30 * 60);
+
+            }
+            if (itemToCheck.type == ItemID.SummoningPotion && itemToCheck.stack >= 100)
+            {
+                player.SetBuff(110, 30 * 60);
+
+            }
+            if (itemToCheck.type == ItemID.TrapsightPotion && itemToCheck.stack >= 100)
+            {
+                player.SetBuff(111, 30 * 60);
+
+            }
+            if (itemToCheck.type == ItemID.AmmoReservationPotion && itemToCheck.stack >= 100)
+            {
+                player.SetBuff(112, 30 * 60);
+
+            }
+            if (itemToCheck.type == ItemID.LifeforcePotion && itemToCheck.stack >= 100)
+            {
+                player.SetBuff(113, 30 * 60);
+
+            }
+            if (itemToCheck.type == ItemID.EndurancePotion && itemToCheck.stack >= 100)
+            {
+                player.SetBuff(114, 30 * 60);
+
+            }
+            if (itemToCheck.type == ItemID.RagePotion && itemToCheck.stack >= 100)
+            {
+                player.SetBuff(115, 30 * 60);
+
+            }
+            if (itemToCheck.type == ItemID.InfernoPotion && itemToCheck.stack >= 100)
+            {
+                player.SetBuff(116, 30 * 60);
+
+            }
+            if (itemToCheck.type == ItemID.WrathPotion && itemToCheck.stack >= 100)
+            {
+                player.SetBuff(117, 30 * 60);
+
+            }
+            if (itemToCheck.type == ItemID.FishingPotion && itemToCheck.stack >= 100)
+            {
+                player.SetBuff(121, 30 * 60);
+
+            }
+            if (itemToCheck.type == ItemID.SonarPotion && itemToCheck.stack >= 100)
+            {
+                player.SetBuff(122, 30 * 60);
+
+            }
+            if (itemToCheck.type == ItemID.CratePotion && itemToCheck.stack >= 100)
+            {
+                player.SetBuff(123, 30 * 60);
+
+            }
+            if (itemToCheck.type == ItemID.WarmthPotion && itemToCheck.stack >= 100)
+            {
+                player.SetBuff(124, 3 * 60);
+
+            }
+            if (itemToCheck.type == ItemID.BiomeSightPotion && itemToCheck.stack >= 100)
+            {
+                player.SetBuff(343, 3 * 60);
+
+            }
+            if ((itemToCheck.type == ItemID.GoldenDelight ||
+                 itemToCheck.type == ItemID.GrapeJuice ||
+                 itemToCheck.type == ItemID.ApplePie ||
+                 itemToCheck.type == ItemID.Bacon ||
+                 itemToCheck.type == ItemID.BBQRibs ||
+                 itemToCheck.type == ItemID.Burger ||
+                 itemToCheck.type == ItemID.Hotdog ||
+                 itemToCheck.type == ItemID.Milkshake ||
+                 itemToCheck.type == ItemID.Pizza ||
+                 itemToCheck.type == ItemID.Spaghetti ||
+                 itemToCheck.type == ItemID.Steak ||
+                 itemToCheck.type == ItemID.ChristmasPudding ||
+                 itemToCheck.type == ItemID.GingerbreadCookie ||
+                 itemToCheck.type == ItemID.SugarCookie)
+                    && itemToCheck.stack >= 10)
+            {
+                player.SetBuff(207, 30 * 60);
+
+            }
+            if (itemToCheck.type == ItemID.LuckPotionLesser && itemToCheck.stack >= 20)
+            {
+                player.SetBuff(257, 30 * 60);
+
+            }
+            if (itemToCheck.type == ItemID.HeartLantern && itemToCheck.stack >= 1)
+            {
+                player.SetBuff(89, 30 * 60);
+
+            }
+            if (itemToCheck.type == ItemID.StarinaBottle && itemToCheck.stack >= 1)
+            {
+                player.SetBuff(158, 30 * 60);
+
+            }
+            if (itemToCheck.type == ItemID.PeaceCandle && itemToCheck.stack >= 2)
+            {
+                player.SetBuff(157, 30 * 60);
+
+            }
+            if (itemToCheck.type == ItemID.Sunflower && itemToCheck.stack >= 100)
+            {
+                player.SetBuff(146, 30 * 60);
+
+            }
+            if (itemToCheck.type == ItemID.Campfire && itemToCheck.stack >= 100)
+            {
+                player.SetBuff(87, 30 * 60);
+
+            }
+            if (itemToCheck.type == ItemID.WaterCandle && itemToCheck.stack >= 2)
+            {
+                player.SetBuff(86, 30 * 60);
+
+            }
+            if (itemToCheck.type == ItemID.ShadowCandle && itemToCheck.stack >= 2)
+            {
+                player.SetBuff(350, 30 * 60);
+
+            }
+            if (itemToCheck.type == ItemID.FlaskofIchor && itemToCheck.stack >= 100)
+            {
+                player.SetBuff(76, 30 * 60);
+
+            }
+            if (itemToCheck.type == ItemID.FlaskofCursedFlames && itemToCheck.stack >= 100)
+            {
+                player.SetBuff(73, 30 * 60);
+
+            }
+            if (itemToCheck.type == ItemID.FlaskofFire && itemToCheck.stack >= 100)
+            {
+                player.SetBuff(74, 30 * 60);
+
+            }
+            if (itemToCheck.type == ItemID.FlaskofVenom && itemToCheck.stack >= 100)
+            {
+                player.SetBuff(71, 30 * 60);
+
+            }
+            if (itemToCheck.type == ItemID.FlaskofNanites && itemToCheck.stack >= 100)
+            {
+                player.SetBuff(77, 30 * 60);
+
+            }
+            if (itemToCheck.type == ItemID.FlaskofGold && itemToCheck.stack >= 100)
+            {
+                player.SetBuff(75, 30 * 60);
+
+            }
+            if (itemToCheck.type == ItemID.FlaskofParty && itemToCheck.stack >= 100)
+            {
+                player.SetBuff(78, 30 * 60);
+
+            }
+            if (itemToCheck.type == ItemID.FlaskofPoison && itemToCheck.stack >= 100)
+            {
+                player.SetBuff(79, 30 * 60);
+
+            }
+            if (itemToCheck.type == ItemID.SeafoodDinner && itemToCheck.stack >= 100)
+            {
+                player.SetBuff(206, 30 * 60);
+
+            }
+            if (itemToCheck.type == ItemID.CookedFish && itemToCheck.stack >= 100)
+            {
+                player.SetBuff(26, 30 * 60);
+
+            }
+            if ((itemToCheck.type == ItemID.Sake || itemToCheck.type == ItemID.Ale) && itemToCheck.stack >= 100)
+            {
+                player.SetBuff(25, 30 * 60);
+
+            }
+            if (itemToCheck.type == ItemID.BottomlessHoneyBucket && itemToCheck.stack >= 1)
+            {
+                player.SetBuff(48, 30 * 60);
+
+            }
+            if (itemToCheck.type == ItemID.BoneRattle && itemToCheck.stack >= 1)
+            {
+                player.SetBuff(63, 30 * 60);
+
+            }
+            if (itemToCheck.type == ItemID.ChlorophyteBar && itemToCheck.stack >= 300)
+            {
+                player.SetBuff(60, 30 * 60);
+
+
+            }
+            if (itemToCheck.type == ItemID.Waldo && itemToCheck.stack >= 1)
+            {
+                player.SetBuff(198, 30 * 60);
+                player.SetBuff(195, 30 * 60);
+                player.SetBuff(21, 30 * 60);
+                player.SetBuff(30, 30 * 60);
+
+            }
+            if (itemToCheck.type == ItemID.PalladiumBar && itemToCheck.stack >= 300)
+            {
+                player.SetBuff(58, 30 * 60);
+            }
+            if (itemToCheck.type == ItemID.Bacon && itemToCheck.stack >= 20)
+            {
+                player.SetBuff(336, 30 * 60);
+            }*/
+            #endregion
 
         }
 
@@ -1892,7 +2262,7 @@ namespace ProgressionBasedAntiCheat
             UpdateCount++;
 
             // Check for 999 platinum coins every 15 frames
-            if (UpdateCount % 10 == 0)
+            if (UpdateCount % 30 == 0)
             {
                 foreach (TSPlayer plr in GetLoggedInPlayers())
                 {
