@@ -9,3 +9,7 @@ Do note that it could be laggy due to how it checks each slot of each player. So
 
 Something I plan on doing is making it so all the items are located neatly in a config file since currently it's just directly in a large if statements and a command which allows you add the items directly with command and make the notification be sent to either only on console or .
 This isn't really an anti-cheat, just something to prevent unobtainable items from being distributed or used if X boss or event is not done.
+
+Permissions:
+
+- pl.bypass (Makes group immune to progressionlock item deletion.)
